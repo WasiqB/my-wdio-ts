@@ -1,0 +1,19 @@
+{
+  "name": "my-wdio-ts",
+  "type": "module",
+  "devDependencies": {
+    "@wdio/allure-reporter": "^8.10.2",
+    "@wdio/appium-service": "^8.10.2",
+    "@wdio/cli": "^8.10.2",
+    "@wdio/cucumber-framework": "^8.10.3",
+    "@wdio/local-runner": "^8.10.2",
+    "@wdio/spec-reporter": "^8.10.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "wdio-cucumberjs-json-reporter": "^5.1.4",
+    "wdio-wait-for": "^3.0.4"
+  },
+  "scripts": {
+    "wdio": "wdio run ./src/config/wdio.conf.ts"
+  }
+}
