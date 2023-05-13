@@ -1,4 +1,6 @@
+import { rm } from "node:fs/promises";
 import type { Options } from "@wdio/types";
+import { generate } from "multiple-cucumber-html-reporter";
 
 export const config: Options.Testrunner = {
   //
@@ -62,12 +64,23 @@ export const config: Options.Testrunner = {
   capabilities: [
     {
       // capabilities for local Appium web tests on an Android Emulator
-      platformName: "Android", // or "iOS"
-      browserName: "Chrome", // or "Safari"
-      "appium:deviceName": "Android GoogleAPI Emulator", // or "iPhone Simulator"
-      "appium:platformVersion": "12.0", // or "16.2" (for running iOS v16)
-      "appium:automationName": "UiAutomator2", // or "XCUITest"
+      platformName: "Android",
+      browserName: "Chrome",
+      "appium:deviceName": "Android GoogleAPI Emulator",
+      "appium:platformVersion": "12",
+      "appium:automationName": "UiAutomator2",
       "appium:avd": "Pixel_6_Pro",
+      "cjson:metadata": {
+        browser: {
+          name: "chrome",
+          version: "91",
+        },
+        device: "Pixel 6 Pro",
+        platform: {
+          name: "Android",
+          version: "12",
+        },
+      },
     },
   ],
   //
@@ -157,7 +170,6 @@ export const config: Options.Testrunner = {
       "cucumberjs-json",
       {
         jsonFolder: "reports/json",
-        reportPath: "reports/report",
       },
     ],
   ],
@@ -202,8 +214,7 @@ export const config: Options.Testrunner = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
-  // },
+  onPrepare: (config, capabilities) => rm("reports/", { recursive: true }),
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -344,8 +355,19 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: (exitCode, config, capabilities, results) => {
+    generate({
+      jsonDir: "reports/json/",
+      reportPath: "reports/report/",
+      openReportInBrowser: true,
+      saveCollectedJSON: true,
+      displayReportTime: true,
+      durationInMS: false,
+      displayDuration: true,
+      pageTitle: "My WDIO Typescript Sample",
+      reportName: "Cucumber JS Report",
+    });
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
