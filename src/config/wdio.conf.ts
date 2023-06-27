@@ -1,6 +1,7 @@
 import { rm } from "node:fs/promises";
 import type { Options } from "@wdio/types";
 import { generate } from "multiple-cucumber-html-reporter";
+import cucumberJson from "wdio-cucumberjs-json-reporter";
 
 export const config: Options.Testrunner = {
   //
@@ -310,8 +311,11 @@ export const config: Options.Testrunner = {
    * @param {number}                 result.duration  duration of scenario in milliseconds
    * @param {object}                 context          Cucumber World object
    */
-  // afterScenario: function (world, result, context) {
-  // },
+  afterScenario: async (world, result, context) => {
+    if (!result.passed) {
+      cucumberJson.attach(await browser.takeScreenshot(), "image/png");
+    }
+  },
   /**
    *
    * Runs after a Cucumber Feature.
