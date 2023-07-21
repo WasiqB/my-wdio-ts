@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
+    "strict": true,
     "module": "ESNext",
     "types": [
       "node",
@@ -9,6 +10,10 @@
       "@wdio/cucumber-framework",
       "@wdio/appium-service"
     ],
+    "baseUrl": "src",
+    "paths": {
+      "@/pages/*": ["pages/*"]
+    },
     "target": "es2022"
   }
 }

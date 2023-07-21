@@ -1,21 +1,32 @@
 import { Given, When, Then } from "@wdio/cucumber-framework";
 
-import LoginPage from "../pages/login.page.js";
-import SecurePage from "../pages/secure.page.js";
+import LoginPage from "@/pages/login.page.js";
+import SecurePage from "@/pages/secure.page.js";
+import Page from "@/pages/page.js";
 
-const pages = {
+interface Pages {
+  [index: string]: Page;
+}
+
+const pages: Pages = {
   login: LoginPage,
 };
 
-Given(/^I am on the (\w+) page$/, async (page) => {
-  await pages[page].open();
+Given("I am on the {string} page", async (page: string) => {
+  await pages[page].open("/login");
 });
 
-When(/^I login with (\w+) and (.+)$/, async (username, password) => {
-  await LoginPage.login(username, password);
-});
+When(
+  "I login with {string} and {string}",
+  async (username: string, password: string) => {
+    await LoginPage.login(username, password);
+  }
+);
 
-Then(/^I should see a flash message saying (.*)$/, async (message) => {
-  await expect(SecurePage.flashAlert).toBeExisting();
-  await expect(SecurePage.flashAlert).toHaveTextContaining(message);
-});
+Then(
+  "I should see a flash message saying {string}",
+  async (message: string) => {
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(message);
+  }
+);

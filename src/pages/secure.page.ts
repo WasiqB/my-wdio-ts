@@ -1,4 +1,4 @@
-import Page from "./page.js";
+import Page from "@/pages/page";
 
 /**
  * sub page containing specific selectors and methods for a specific page
