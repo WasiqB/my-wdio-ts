@@ -13,7 +13,7 @@ export const config: Options.Testrunner = {
   autoCompileOpts: {
     autoCompile: true,
     tsNodeOpts: {
-      project: "./tsconfig.json",
+      project: "../../tsconfig.json",
       transpileOnly: true,
     },
   },

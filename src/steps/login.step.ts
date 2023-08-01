@@ -1,8 +1,8 @@
 import { Given, When, Then } from "@wdio/cucumber-framework";
 
-import LoginPage from "@/pages/login.page.js";
-import SecurePage from "@/pages/secure.page.js";
-import Page from "@/pages/page.js";
+import LoginPage from "../pages/login.page.ts";
+import SecurePage from "../pages/secure.page.ts";
+import Page from "../pages/page.ts";
 
 interface Pages {
   [index: string]: Page;

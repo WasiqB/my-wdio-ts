@@ -1,4 +1,4 @@
-import Page from "@/pages/page";
+import Page from "./page.ts";
 
 /**
  * sub page containing specific selectors and methods for a specific page
