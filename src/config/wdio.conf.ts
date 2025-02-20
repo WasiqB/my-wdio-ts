@@ -68,18 +68,18 @@ export const config: Options.Testrunner = {
       platformName: "Android",
       browserName: "Chrome",
       "appium:deviceName": "Android GoogleAPI Emulator",
-      "appium:platformVersion": "12",
+      "appium:platformVersion": "14",
       "appium:automationName": "UiAutomator2",
-      "appium:avd": "Pixel_6_Pro",
+      "appium:avd": "Pixel_8_Pro",
       "cjson:metadata": {
         browser: {
           name: "chrome",
-          version: "91",
+          version: "latest",
         },
-        device: "Pixel 6 Pro",
+        device: "Pixel 8 Pro",
         platform: {
           name: "Android",
-          version: "12",
+          version: "14",
         },
       },
     },
@@ -363,6 +363,7 @@ export const config: Options.Testrunner = {
     generate({
       jsonDir: "reports/json/",
       reportPath: "reports/report/",
+      useCDN: true,
       openReportInBrowser: true,
       saveCollectedJSON: true,
       displayReportTime: true,
