@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "moduleResolution": "Node",
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
@@ -9,20 +12,24 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "module": "ESNext",
     "types": [
       "node",
       "@wdio/globals/types",
       "expect-webdriverio",
-      "@wdio/cucumber-framework",
-      "@wdio/appium-service"
+      "@wdio/cucumber-framework"
     ],
-    "target": "ES6",
-    "baseUrl": "./src",
+    "target": "es2022",
+    "module": "esnext",
     "paths": {
-      "@pages/*": ["pages/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

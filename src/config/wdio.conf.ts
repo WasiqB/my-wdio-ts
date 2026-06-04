@@ -1,24 +1,19 @@
+import os from 'node:os';
 import { rm } from "node:fs/promises";
-import type { Options } from "@wdio/types";
-import { generate } from "multiple-cucumber-html-reporter";
+import { generate, Metadata } from "multiple-cucumber-html-reporter";
 import cucumberJson from "wdio-cucumberjs-json-reporter";
+import { existsSync } from "node:fs";
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
   //
   // ====================
   // Runner Configuration
   // ====================
   // WebdriverIO supports running e2e tests as well as unit and component tests.
   runner: "local",
-  autoCompileOpts: {
-    autoCompile: true,
-    tsNodeOpts: {
-      project: "../../tsconfig.json",
-      transpileOnly: true,
-    },
-  },
+  tsConfigPath: "./tsconfig.json",
 
-  port: 4723,
+  // port: 4723,
   //
   // ==================
   // Specify Test Files
@@ -64,25 +59,26 @@ export const config: Options.Testrunner = {
   //
   capabilities: [
     {
-      // capabilities for local Appium web tests on an Android Emulator
-      platformName: "Android",
-      browserName: "Chrome",
-      "appium:deviceName": "Android GoogleAPI Emulator",
-      "appium:platformVersion": "14",
-      "appium:automationName": "UiAutomator2",
-      "appium:avd": "Pixel_8_Pro",
-      "cjson:metadata": {
+      browserName: 'chrome',
+      browserVersion: process.env.WDIO_CHROME_VERSION || '148',
+      'wdio:chromedriverOptions': {
+        binary: process.env.WDIO_CHROME_DRIVER || undefined,
+      },
+      'goog:chromeOptions': {
+        binary: process.env.WDIO_CHROME_PATH || undefined,
+        args: [],
+      },
+      'cjson:metadata': {
         browser: {
-          name: "chrome",
-          version: "latest",
+          name: 'chrome',
+          version: process.env.WDIO_CHROME_VERSION || '148',
         },
-        device: "Pixel 8 Pro",
         platform: {
-          name: "Android",
-          version: "14",
+          name: os.platform().trim(),
+          version: os.release().trim(),
         },
       },
-    },
+    } as WebdriverIO.Capabilities & { 'cjson:metadata': Metadata },
   ],
   //
   // ===================
@@ -126,23 +122,23 @@ export const config: Options.Testrunner = {
   //
   // Default request retries count
   connectionRetryCount: 3,
-  outputDir: "reports/logs",
+  outputDir: "logs",
   //
   // Test runner services
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: [
-    [
-      "appium",
-      {
-        command: "appium",
-        args: {
-          allowInsecure: "chromedriver_autodownload",
-        },
-      },
-    ],
-  ],
+  // services: [
+  //   [
+  //     "appium",
+  //     {
+  //       command: "appium",
+  //       args: {
+  //         allowInsecure: "chromedriver_autodownload",
+  //       },
+  //     },
+  //   ],
+  // ],
 
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
@@ -166,7 +162,6 @@ export const config: Options.Testrunner = {
   // see also: https://webdriver.io/docs/dot-reporter
   reporters: [
     "spec",
-    ["allure", { outputDir: "reports/allure-results" }],
     [
       "cucumberjs-json",
       {
@@ -179,7 +174,7 @@ export const config: Options.Testrunner = {
   // If you are using Cucumber you need to specify the location of your step definitions.
   cucumberOpts: {
     // <string[]> (file/dir) require files before executing features
-    require: ["./src/steps/*.step.ts"],
+    require: ["./src/steps/*.steps.ts"],
     // <boolean> show full backtrace for errors
     backtrace: false,
     // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -215,7 +210,11 @@ export const config: Options.Testrunner = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: (config, capabilities) => rm("reports/", { recursive: true }),
+  onPrepare: async(config, capabilities) => {
+    if (existsSync('reports')) {
+      await rm('reports', { recursive: true });
+    }
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -359,8 +358,8 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  onComplete: (exitCode, config, capabilities, results) => {
-    generate({
+  onComplete: async (exitCode, config, capabilities, results) => {
+    await generate({
       jsonDir: "reports/json/",
       reportPath: "reports/report/",
       useCDN: true,
