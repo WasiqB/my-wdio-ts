@@ -1,8 +1,12 @@
 import os from 'node:os';
 import { rm } from "node:fs/promises";
 import { generate, Metadata } from "multiple-cucumber-html-reporter";
+import dayjs from 'dayjs';
 import cucumberJson from "wdio-cucumberjs-json-reporter";
 import { existsSync } from "node:fs";
+
+let startTime: number;
+let endTime: number;
 
 export const config: WebdriverIO.Config = {
   //
@@ -73,6 +77,7 @@ export const config: WebdriverIO.Config = {
           name: 'chrome',
           version: process.env.WDIO_CHROME_VERSION || '148',
         },
+        device: "MacBook Pro",
         platform: {
           name: os.platform().trim(),
           version: os.release().trim(),
@@ -211,6 +216,7 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: async(config, capabilities) => {
+    startTime = Date.now();
     if (existsSync('reports')) {
       await rm('reports', { recursive: true });
     }
@@ -359,6 +365,7 @@ export const config: WebdriverIO.Config = {
    * @param {<Object>} results object containing test results
    */
   onComplete: async (exitCode, config, capabilities, results) => {
+    endTime = Date.now();
     await generate({
       jsonDir: "reports/json/",
       reportPath: "reports/report/",
@@ -368,6 +375,33 @@ export const config: WebdriverIO.Config = {
       displayReportTime: true,
       durationInMS: false,
       displayDuration: true,
+      metadata: {
+        browser: {
+          name: 'chrome',
+          version: process.env.WDIO_CHROME_VERSION || '148',
+        },
+        platform: {
+          name: os.platform().trim(),
+          version: os.release().trim(),
+        },
+      },
+      customData: {
+        title: 'Run Info',
+        data: [
+          { label: 'Project', value: 'Sample WDIO Typescript' },
+          { label: 'Release', value: '1.0.0' },
+          { label: 'WDIO Version', value: '9.0.0' },
+          { label: 'Node Version', value: '24.0.0' },
+          {
+            label: 'Execution Start Time',
+            value: dayjs(startTime).format('YYYY-MM-DD HH:mm:ss.SSS'),
+          },
+          {
+            label: 'Execution End Time',
+            value: dayjs(endTime).format('YYYY-MM-DD HH:mm:ss.SSS'),
+          },
+        ],
+      },
       pageTitle: "My WDIO Typescript Sample",
       reportName: "Cucumber JS Report",
     });
